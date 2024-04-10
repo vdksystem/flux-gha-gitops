@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: default
+resources:
+  - https://github.com/vdksystem/flux-gha-app//deploy?timeout=120
+  - ../base
+images:
+  - name: ghcr.io/vdksystem/flux-gha-app
+    newTag: sha-d6003f3593687896eba1b883a4d474f5788eb738 # {"$imagepolicy": "default:flux-gha-app:tag"}
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/imagePullSecrets
+        value:
+        - name: github
+  - target:
+      kind: ImagePolicy
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: flux-gha-app
+
+      - op: replace
+        path: /spec/imageRepositoryRef/name
+        value: flux-gha-app
+  - target:
+      kind: ImageRepository
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: flux-gha-app
+
+      - op: replace
+        path: /spec/image
+        value: ghcr.io/vdksystem/flux-gha-app
+  - target:
+      kind: ImageUpdateAutomation
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: flux-gha-app

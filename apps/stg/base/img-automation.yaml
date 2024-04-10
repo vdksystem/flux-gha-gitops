@@ -1,0 +1,56 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: staging
+spec:
+  image: ghcr.io/vdksystem/common-app
+  interval: 1h
+  provider: generic
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: staging
+spec:
+  imageRepositoryRef:
+    name: staging
+  filterTags:
+    pattern: '.*-rc.*'
+  policy:
+    semver:
+      range: '^1.x-0'
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: staging
+spec:
+  git:
+    commit:
+      messageTemplate: |
+        Automated image update
+
+        Automation name: {{ .AutomationObject }}
+
+        Files:
+        {{ range $filename, $_ := .Updated.Files -}}
+        - {{ $filename }}
+        {{ end -}}
+
+        Objects:
+        {{ range $resource, $_ := .Updated.Objects -}}
+        - {{ $resource.Kind | lower }} {{ $resource.Name | lower  }}
+        {{ end -}}
+
+        Images:
+        {{ range $image, $_ := .Updated.Images -}}
+        	{{ if contains "1.0.0" $image -}}
+        		- {{ $image }}
+        	{{ else -}}
+        		[skip ci] wrong image
+        	{{ end -}}        
+        {{ end -}}
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
