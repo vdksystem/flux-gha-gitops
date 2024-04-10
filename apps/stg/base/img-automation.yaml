@@ -4,6 +4,8 @@ kind: ImageRepository
 metadata:
   name: staging
 spec:
+  secretRef:
+    name: github
   image: ghcr.io/vdksystem/common-app
   interval: 1h
   provider: generic
