@@ -3,6 +3,9 @@ kind: Kustomization
 namespace: default
 resources:
   - https://github.com/vdksystem/flux-gha-app//deploy?timeout=120
+images:
+  - name: ghcr.io/vdksystem/flux-gha-app
+    newTag: sha-d6003f3593687896eba1b883a4d474f5788eb738
 patches:
   - target:
       kind: Deployment
