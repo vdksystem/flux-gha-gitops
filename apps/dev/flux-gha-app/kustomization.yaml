@@ -3,3 +3,11 @@ kind: Kustomization
 namespace: default
 resources:
   - https://github.com/vdksystem/flux-gha-app//deploy?timeout=120
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/imagePullSecrets
+        value:
+        - name: github
