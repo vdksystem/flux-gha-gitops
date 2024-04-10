@@ -26,6 +26,10 @@ kind: ImageUpdateAutomation
 metadata:
   name: staging
 spec:
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
   git:
     commit:
       messageTemplate: |
